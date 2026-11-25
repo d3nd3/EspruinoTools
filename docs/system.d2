@@ -1,0 +1,70 @@
+# EspruinoTools — system overview
+# A thin fork-origin note: an untouched mirror of espruino/EspruinoTools.
+# Zones run left to right: origin -> core -> state -> external.
+# Style classes set strokes only, so light and dark stay readable.
+
+title: |md
+  # EspruinoTools
+  The JavaScript library and espruino CLI that opens a connection to a board, transforms your code and uploads it over serial, Bluetooth or TCP.
+| {near: top-center}
+
+direction: right
+grid-columns: 2
+grid-rows: 2
+horizontal-gap: 170
+vertical-gap: 110
+
+origin: Origin {
+  direction: down
+
+  upstream: `espruino/EspruinoTools` · Gordon Williams · MPL 2.0 · npm package `espruino` 0.1.55
+  mirror: `d3nd3/EspruinoTools` · one docs commit of ours · still 155 behind upstream
+  vendored: EspruinoWebIDE keeps a copy in `EspruinoTools/`, BangleApps in `core/lib/espruinotools.js`
+  form: no build step and no tests · `npm test` is a script that errors on purpose
+}
+
+state: State {
+  direction: down
+
+  config: `core/config.js` · chrome.storage.sync, else `localStorage` key `CONFIG`, else a base64 cookie
+  job: `-j job.json` · read back into the config object, `configDefaults.json` is the template it writes
+  env: `core/env.js` · `process.env` from the board asked 200 ms after connect, memory only, never written
+}
+
+core: Core {
+  direction: down
+
+  cli: `bin/espruino-cli.js` · the `espruino` bin — upload, `--watch`, `--ide` with a port, `--list`, `--download`
+  loader: `index.js` · eval()s every non-underscore `.js` in `libs/`, `core/`, `plugins/` into one global
+  bus: `espruino.js` · the `Espruino` global plus a named processor chain every module hooks into
+  transports: `core/serial_*.js` · serialport, Web Serial, Web Bluetooth, WebSocket relay, WebRTC, audio modem
+  queue: `core/serial.js` · 512-byte blocks (or `maxWriteLength` from the device, 19 when slow) with 250 to 500 ms pauses
+  writer: `core/codeWriter.js` · prompts first, prefixes `\x10reset()` and `\x10print()`, then polls for `>`
+  plugins: `plugins/` · minify, pretokenise, saveOnSend, setTime, versionChecker, boardJSON, compiler, getGitHub
+  flash: `core/flasher.js`, `flasherESP8266.js` · STM32 bootloader `0x7F` / ACK `0x79`, and ESP8266
+}
+
+ext: External {
+  direction: down
+
+  board: Espruino over serial, BLE, TCP port 23 or a WebRTC peer id
+  site: espruino.com/json · board JSON gives pins, firmware links and the real `JSON_URL`
+  npm: optional noble, serialport, peerjs, ws · a missing one silently disables that transport
+  ide: EspruinoWebIDE · loads the same files unmodified, which is why they are globals
+}
+
+origin -> core: upstream tree, unmodified
+core -> state: settings, job file, board env
+core -> ext: bytes to the board, JSON from espruino.com
+
+classes: {
+  origin: {style: {stroke: "#2f6fbf"}}
+  core: {style: {stroke: "#2f8f5f"}}
+  state: {style: {stroke: "#a86a12"; stroke-dash: 3}}
+  ext: {style: {stroke: "#8a4fbf"; stroke-dash: 5}}
+}
+
+origin.class: origin
+core.class: core
+state.class: state
+ext.class: ext

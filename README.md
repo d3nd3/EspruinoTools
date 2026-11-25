@@ -1,6 +1,9 @@
 Espruino Tools
 ==============
 
+Prefer pictures? Start with **[HUMANS.md](HUMANS.md)**.
+
+
 This repository contains a set of tools for the [Espruino JavaScript Interpreter](http://www.espruino.com).
 
 While it is used directly by the [Espruino Web IDE](http://www.github.com/espruino/EspruinoWebIDE), there are also simple command-line and `node.js` interfaces.
